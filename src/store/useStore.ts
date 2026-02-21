@@ -14,7 +14,7 @@ export interface Product {
 }
 
 export interface User {
-    phone: string;
+    email: string;
     role: 'farmer' | 'consumer';
     name?: string;
 }
@@ -30,7 +30,7 @@ interface AppState {
     toggleCart: () => void;
     fetchProducts: () => Promise<void>;
     clearCart: () => void;
-    login: (phone: string, role: 'farmer' | 'consumer') => void;
+    login: (email: string, role: 'farmer' | 'consumer') => void;
     logout: () => void;
     addProductLocally: (product: Product) => void;
 }
@@ -49,7 +49,7 @@ export const useStore = create<AppState>()(
             })),
             toggleCart: () => set((state) => ({ isCartOpen: !state.isCartOpen })),
             clearCart: () => set({ cart: [] }),
-            login: (phone, role) => set({ user: { phone, role }, isAuthenticated: true }),
+            login: (email, role) => set({ user: { email, role }, isAuthenticated: true }),
             logout: () => set({ user: null, isAuthenticated: false }),
             addProductLocally: (product) => set((state) => ({ products: [product, ...state.products] })), // push local item into local inventory correctly
             fetchProducts: async () => {

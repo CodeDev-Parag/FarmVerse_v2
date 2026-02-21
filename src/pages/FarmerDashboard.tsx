@@ -21,7 +21,7 @@ export const FarmerDashboard = () => {
     const farmerInventory = useMemo(() => {
         // Find products owned by this specific farmer (or fallback to showing all products conceptually if no strict bindings exist yet)
         if (!user || user.role !== 'farmer') return [];
-        return products.filter(p => p.farmer === user.phone || p.farmer === user.name);
+        return products.filter(p => p.farmer === user.email || p.farmer === user.name);
     }, [products, user]);
 
     // Derived statistics
@@ -117,7 +117,7 @@ export const FarmerDashboard = () => {
                                 id: cuid(),
                                 name: newCropName,
                                 price: parseFloat(newCropPrice),
-                                farmer: user?.phone || 'Unknown Farmer',
+                                farmer: user?.email || 'Unknown Farmer',
                                 category: 'vegetable', // defaults
                                 stock: newCropStock,
                             };
