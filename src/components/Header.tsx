@@ -185,7 +185,7 @@ export const Header = () => {
 
                                             <div className="py-2">
                                                 <Link
-                                                    to={user.role === 'farmer' ? '/farmer/dashboard' : '/'}
+                                                    to={user.role === 'farmer' ? '/farmer/dashboard' : '/my-orders'}
                                                     onClick={() => setShowProfileMenu(false)}
                                                     className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-all duration-200 group"
                                                 >

@@ -13,6 +13,7 @@ import { Placeholder } from './pages/Placeholder';
 import { CategoryPage } from './pages/CategoryPage';
 import { ConsumerLogin } from './pages/ConsumerLogin';
 import { AboutUs, HowItWorks, FarmerDirectory, GovernmentSchemes, ContactUs, FAQ, TermsOfService } from './pages/FooterPages';
+import { MyOrders } from './pages/MyOrders';
 import { supabase } from './lib/supabase';
 import { useStore } from './store/useStore';
 
@@ -50,6 +51,7 @@ export default function App() {
           <Route path="/consumer/login" element={<ConsumerLogin />} />
           <Route path="/farmer/dashboard" element={<FarmerDashboard />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/my-orders" element={<MyOrders />} />
           <Route path="/supplies/:categoryName" element={<CategoryPage />} />
 
           {/* Quick Links & Footer Routes */}

@@ -19,9 +19,28 @@ export interface User {
     name?: string;
 }
 
+export interface OrderItem {
+    name: string;
+    price: number;
+    image?: string;
+}
+
+export interface Order {
+    id: string;
+    items: OrderItem[];
+    total: number;
+    status: 'confirmed' | 'processing' | 'shipped' | 'delivered';
+    date: string;
+    customerName: string;
+    address: string;
+    city: string;
+    paymentMethod: string;
+}
+
 interface AppState {
     cart: Product[];
     products: Product[];
+    orders: Order[];
     isCartOpen: boolean;
     user: User | null;
     isAuthenticated: boolean;
@@ -33,6 +52,7 @@ interface AppState {
     login: (email: string, role: 'farmer' | 'consumer') => void;
     logout: () => void;
     addProductLocally: (product: Product) => void;
+    placeOrder: (order: Omit<Order, 'id' | 'date' | 'status'>) => void;
 }
 
 export const useStore = create<AppState>()(
@@ -40,6 +60,7 @@ export const useStore = create<AppState>()(
         (set) => ({
             cart: [],
             products: [],
+            orders: [],
             isCartOpen: false,
             user: null,
             isAuthenticated: false,
@@ -51,14 +72,19 @@ export const useStore = create<AppState>()(
             clearCart: () => set({ cart: [] }),
             login: (email, role) => set({ user: { email, role }, isAuthenticated: true }),
             logout: () => set({ user: null, isAuthenticated: false }),
-            addProductLocally: (product) => set((state) => ({ products: [product, ...state.products] })), // push local item into local inventory correctly
+            addProductLocally: (product) => set((state) => ({ products: [product, ...state.products] })),
+            placeOrder: (orderData) => set((state) => ({
+                orders: [{
+                    ...orderData,
+                    id: `ORD-${Date.now().toString(36).toUpperCase()}`,
+                    date: new Date().toISOString(),
+                    status: 'confirmed',
+                }, ...state.orders],
+            })),
             fetchProducts: async () => {
                 try {
-                    // Try to fetch from backend, fallback locally gracefully if we want simple testing
                     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
                     const res = await axios.get(`${apiUrl}/api/products`);
-
-                    // Merge local offline products conceptually if keeping it simple
                     set((state) => ({
                         products: [...state.products.filter(p => !p._id), ...res.data]
                     }));
@@ -68,9 +94,8 @@ export const useStore = create<AppState>()(
             }
         }),
         {
-            name: 'farmverse-feature-storage', // unique name for local storage key
-            // Now persist `products` alongside user details to make farmer feature testing work fully offline!
-            partialize: (state) => ({ cart: state.cart, user: state.user, isAuthenticated: state.isAuthenticated, products: state.products }),
+            name: 'farmverse-feature-storage',
+            partialize: (state) => ({ cart: state.cart, user: state.user, isAuthenticated: state.isAuthenticated, products: state.products, orders: state.orders }),
         }
     )
 );
