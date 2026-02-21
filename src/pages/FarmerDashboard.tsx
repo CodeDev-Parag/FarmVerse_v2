@@ -10,6 +10,7 @@ export const FarmerDashboard = () => {
     const [newCropName, setNewCropName] = useState('');
     const [newCropPrice, setNewCropPrice] = useState('');
     const [newCropStock, setNewCropStock] = useState('');
+    const [newCropCategory, setNewCropCategory] = useState('vegetable');
 
     const { products, user, addProductLocally } = useStore((state) => ({
         products: state.products,
@@ -23,6 +24,15 @@ export const FarmerDashboard = () => {
         if (!user || user.role !== 'farmer') return [];
         return products.filter(p => p.farmer === user.email || p.farmer === user.name);
     }, [products, user]);
+
+    const groupedInventory = useMemo(() => {
+        return farmerInventory.reduce((acc, item) => {
+            const cat = item.category || 'uncategorized';
+            if (!acc[cat]) acc[cat] = [];
+            acc[cat].push(item);
+            return acc;
+        }, {} as Record<string, typeof farmerInventory>);
+    }, [farmerInventory]);
 
     // Derived statistics
     const totalSales = farmerInventory.reduce((acc, current) => acc + (current.price * 5), 0); // Simulated sales tracking logic
@@ -63,38 +73,54 @@ export const FarmerDashboard = () => {
                     </div>
 
                     <div className="p-0 border-t border-green-100">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="bg-green-50 text-gray-600 text-sm border-b border-green-100">
-                                    <th className="p-4 font-medium">Crop Name</th>
-                                    <th className="p-4 font-medium">Stock Available</th>
-                                    <th className="p-4 font-medium">Price per kg</th>
-                                    <th className="p-4 font-medium text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {farmerInventory.length > 0 ? farmerInventory.map((item) => (
-                                    <tr key={item._id || item.id} className="border-b border-green-50 hover:bg-green-50/50 transition">
-                                        <td className="p-4 font-medium text-gray-800 flex items-center gap-3">
-                                            {item.image && <img src={item.image} className="w-10 h-10 rounded object-cover" alt="crop" />}
-                                            {item.name}
-                                        </td>
-                                        <td className="p-4 text-gray-600">Stock available</td>
-                                        <td className="p-4 text-gray-600">₹{item.price}</td>
-                                        <td className="p-4 text-right">
-                                            <button className="text-secondary hover:text-amber-700 font-medium text-sm mr-4">Edit</button>
-                                            <button className="text-red-500 hover:text-red-700 font-medium text-sm">Delete</button>
-                                        </td>
-                                    </tr>
-                                )) : (
-                                    <tr>
-                                        <td colSpan={4} className="p-8 text-center text-gray-400">
-                                            No crops actively assigned to your inventory right now.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                        {Object.keys(groupedInventory).length > 0 ? (
+                            <div className="space-y-6 p-4">
+                                {Object.entries(groupedInventory).map(([category, items]) => (
+                                    <div key={category} className="border border-green-100 rounded-lg overflow-hidden shadow-sm">
+                                        <div className="bg-green-100/50 px-4 py-3 border-b border-green-100 flex items-center gap-2">
+                                            <span className="font-bold text-green-800 capitalize">{category}s</span>
+                                            <span className="bg-white text-green-700 text-xs font-bold px-2 py-0.5 rounded-full border border-green-200">{items.length}</span>
+                                        </div>
+                                        <table className="w-full text-left border-collapse bg-white">
+                                            <thead>
+                                                <tr className="bg-gray-50/50 text-gray-500 text-xs uppercase tracking-wider border-b border-green-50">
+                                                    <th className="px-4 py-3 font-medium">Crop Name</th>
+                                                    <th className="px-4 py-3 font-medium">Stock</th>
+                                                    <th className="px-4 py-3 font-medium">Price/kg</th>
+                                                    <th className="px-4 py-3 font-medium text-right">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {items.map((item) => (
+                                                    <tr key={item._id || item.id} className="border-b border-green-50 hover:bg-green-50/30 transition last:border-0">
+                                                        <td className="px-4 py-3 font-medium text-gray-800 flex items-center gap-3">
+                                                            {item.image ? (
+                                                                <img src={item.image} className="w-8 h-8 rounded object-cover" alt={item.name} />
+                                                            ) : (
+                                                                <div className="w-8 h-8 rounded bg-gradient-to-br from-green-100 to-emerald-200 flex items-center justify-center text-xs">🥬</div>
+                                                            )}
+                                                            {item.name}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-sm text-gray-600">Available</td>
+                                                        <td className="px-4 py-3 text-sm font-semibold text-gray-800">₹{item.price}</td>
+                                                        <td className="px-4 py-3 text-right">
+                                                            <button className="text-secondary hover:text-amber-700 font-medium text-sm mr-4 transition-colors">Edit</button>
+                                                            <button className="text-red-500 hover:text-red-700 font-medium text-sm transition-colors">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="p-12 text-center">
+                                <span className="text-4xl block mb-3 opacity-50">🌾</span>
+                                <h3 className="text-lg font-bold text-gray-700 mb-1">Your inventory is empty</h3>
+                                <p className="text-gray-500 mb-4">You haven't added any crops yet. Click the button above to start selling.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -118,7 +144,7 @@ export const FarmerDashboard = () => {
                                 name: newCropName,
                                 price: parseFloat(newCropPrice),
                                 farmer: user?.email || 'Unknown Farmer',
-                                category: 'vegetable', // defaults
+                                category: newCropCategory,
                                 stock: newCropStock,
                             };
 
@@ -127,6 +153,7 @@ export const FarmerDashboard = () => {
                             setNewCropName('');
                             setNewCropPrice('');
                             setNewCropStock('');
+                            setNewCropCategory('vegetable');
                         }}>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Crop Name</label>
@@ -134,13 +161,23 @@ export const FarmerDashboard = () => {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                    <select value={newCropCategory} onChange={e => setNewCropCategory(e.target.value)} className="w-full px-4 py-2 border border-green-200 rounded-lg focus:ring-2 focus:ring-primary outline-none bg-white">
+                                        <option value="vegetable">Vegetables</option>
+                                        <option value="fruit">Fruits</option>
+                                        <option value="grain">Grains</option>
+                                        <option value="dairy">Dairy</option>
+                                        <option value="spice">Spices</option>
+                                    </select>
+                                </div>
+                                <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Price per kg (₹)</label>
                                     <input required type="number" min="1" value={newCropPrice} onChange={e => setNewCropPrice(e.target.value)} placeholder="40" className="w-full px-4 py-2 border border-green-200 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Stock (kg)</label>
-                                    <input required type="number" min="1" value={newCropStock} onChange={e => setNewCropStock(e.target.value)} placeholder="100" className="w-full px-4 py-2 border border-green-200 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Stock (kg)</label>
+                                <input required type="number" min="1" value={newCropStock} onChange={e => setNewCropStock(e.target.value)} placeholder="100" className="w-full px-4 py-2 border border-green-200 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
                             </div>
 
                             <div className="border-2 border-dashed border-green-300 rounded-lg p-6 text-center text-gray-500 hover:bg-green-50 transition cursor-pointer">
