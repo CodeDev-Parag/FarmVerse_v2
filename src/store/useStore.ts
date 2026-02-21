@@ -60,7 +60,16 @@ export const useStore = create<AppState>()(
     persist(
         (set) => ({
             cart: [],
-            products: [],
+            products: [
+                { _id: 'mock-1', name: 'Organic Tomatoes', price: 40, farmer: 'Ramesh Kumar', category: 'vegetable', subCategory: 'tomato', image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&q=80' },
+                { _id: 'mock-2', name: 'Premium Basmati Rice', price: 120, farmer: 'Singh Farms', category: 'grain', subCategory: 'rice', image: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=500&q=80' },
+                { _id: 'mock-3', name: 'Fresh Potatoes', price: 25, farmer: 'Green Valley Naturals', category: 'vegetable', subCategory: 'potato', image: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&q=80' },
+                { _id: 'mock-4', name: 'Alphonso Mangoes', price: 400, farmer: 'AgriCorp Orchards', category: 'fruit', subCategory: 'mango', image: 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=500&q=80' },
+                { _id: 'mock-5', name: 'Red Onions', price: 35, farmer: 'Ramesh Kumar', category: 'vegetable', subCategory: 'onion', image: 'https://images.unsplash.com/photo-1580201092675-a0a6a6cbc9e5?w=500&q=80' },
+                { _id: 'mock-6', name: 'Farm Fresh Milk', price: 60, farmer: 'Surya Dairy', category: 'dairy', subCategory: 'milk', image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&q=80' },
+                { _id: 'mock-7', name: 'Fresh Spinach', price: 30, farmer: 'Organic Village', category: 'vegetable', subCategory: 'spinach', image: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=500&q=80' },
+                { _id: 'mock-8', name: 'Organic Wheat', price: 45, farmer: 'Singh Farms', category: 'grain', subCategory: 'wheat', image: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&q=80' }
+            ],
             orders: [],
             isCartOpen: false,
             user: null,
@@ -94,7 +103,7 @@ export const useStore = create<AppState>()(
                     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
                     const res = await axios.get(`${apiUrl}/api/products`);
                     set((state) => ({
-                        products: [...state.products.filter(p => !p._id), ...res.data]
+                        products: [...state.products.filter(p => !p._id || p._id.startsWith('mock-')), ...res.data]
                     }));
                 } catch (error) {
                     console.warn('Backend unavailable. Operating with local or cached products.');
@@ -102,7 +111,7 @@ export const useStore = create<AppState>()(
             }
         }),
         {
-            name: 'farmverse-feature-storage',
+            name: 'farmverse-store-v2',
             partialize: (state) => ({ cart: state.cart, user: state.user, isAuthenticated: state.isAuthenticated, products: state.products, orders: state.orders }),
         }
     )
