@@ -5,6 +5,16 @@ import { CheckCircle2 } from 'lucide-react';
 
 import axios from 'axios';
 
+const INDIA_STATES = [
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+    "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
+    "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram",
+    "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana",
+    "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
+    "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+];
+
 export const Checkout = () => {
     const { cart, clearCart, isAuthenticated, placeOrder } = useStore();
     const navigate = useNavigate();
@@ -29,6 +39,7 @@ export const Checkout = () => {
         const phone = formData.get('phone') as string;
         const address = formData.get('address') as string;
         const city = formData.get('city') as string;
+        const stateName = formData.get('state') as string;
         const pinCode = formData.get('pinCode') as string;
 
         // Save to local store for My Orders
@@ -40,7 +51,7 @@ export const Checkout = () => {
             })),
             total,
             customerName,
-            address: `${address}, ${pinCode}`,
+            address: `${address}, ${city}, ${stateName} - ${pinCode}`,
             city,
             paymentMethod: 'Cash on Delivery',
         });
@@ -119,14 +130,23 @@ export const Checkout = () => {
                             <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Address</label>
                             <textarea required name="address" rows={3} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none"></textarea>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
                                 <input required name="city" type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
                             </div>
                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+                                <select required name="state" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none bg-white">
+                                    <option value="">Select State...</option>
+                                    {INDIA_STATES.map(state => (
+                                        <option key={state} value={state}>{state}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">PIN Code</label>
-                                <input required name="pinCode" type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
+                                <input required name="pinCode" type="text" pattern="[0-9]{6}" title="6-digit PIN code required" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" />
                             </div>
                         </div>
 
