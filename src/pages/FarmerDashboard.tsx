@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import { AgriSupplies } from '../components/AgriSupplies';
 import cuid from 'cuid';
 
 export const FarmerDashboard = () => {
@@ -122,6 +123,11 @@ export const FarmerDashboard = () => {
                             </div>
                         )}
                     </div>
+                </div>
+
+                {/* Sell products block finished, now let them buy farming products */}
+                <div className="mt-12">
+                    <AgriSupplies />
                 </div>
             </div>
 
