@@ -42,9 +42,14 @@ export default function App() {
     <Router>
       <AuthListener />
       <main className="min-h-screen flex flex-col relative overflow-x-hidden">
-        <Header />
+        {/* Fixed Navbar */}
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <Header />
+          <MandiTicker />
+        </div>
+        {/* Spacer to prevent content from hiding behind fixed navbar */}
+        <div className="h-[120px]" />
         <Cart />
-        <MandiTicker />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/farmer/login" element={<FarmerLogin />} />
