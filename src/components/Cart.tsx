@@ -3,12 +3,22 @@ import { X, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const Cart = () => {
-    const { cart, isCartOpen, toggleCart, removeFromCart, isAuthenticated } = useStore();
+    const { cart, isCartOpen, toggleCart, removeFromCart, removeOneFromCart, addToCart, isAuthenticated } = useStore();
     const navigate = useNavigate();
 
     if (!isCartOpen) return null;
 
     const total = cart.reduce((sum, item) => sum + item.price, 0);
+
+    const groupedCart = Object.values(cart.reduce((acc, item) => {
+        const id = item._id || item.id || '';
+        if (!acc[id]) {
+            acc[id] = { ...item, quantity: 1 };
+        } else {
+            acc[id].quantity += 1;
+        }
+        return acc;
+    }, {} as Record<string, typeof cart[0] & { quantity: number }>));
 
     const handleCheckout = () => {
         toggleCart();
@@ -42,18 +52,38 @@ export const Cart = () => {
                         </div>
                     ) : (
                         <div className="space-y-4">
-                            {cart.map((item, index) => (
-                                <div key={`${item.id}-${index}`} className="flex justify-between items-center bg-green-50/50 p-4 border border-green-100 rounded-lg">
-                                    <div>
+                            {groupedCart.map((item, index) => (
+                                <div key={`${item._id || item.id}-${index}`} className="flex justify-between items-center bg-green-50/50 p-4 border border-green-100 rounded-lg">
+                                    <div className="flex-1">
                                         <h3 className="font-bold text-gray-800">{item.name}</h3>
                                         <p className="text-sm text-gray-500">₹{item.price}/kg</p>
+
+                                        <div className="flex items-center gap-3 mt-3">
+                                            <button
+                                                onClick={() => removeOneFromCart(item._id || item.id || '')}
+                                                className="w-8 h-8 rounded-full bg-white border border-green-200 text-green-700 font-bold flex items-center justify-center hover:bg-green-100 hover:border-green-300 shadow-sm transition-all"
+                                            >
+                                                -
+                                            </button>
+                                            <span className="font-semibold text-gray-700 min-w-[20px] text-center">{item.quantity}</span>
+                                            <button
+                                                onClick={() => addToCart({ _id: item._id, id: item.id, name: item.name, price: item.price, image: item.image, farmer: item.farmer, category: item.category, subCategory: item.subCategory } as any)}
+                                                className="w-8 h-8 rounded-full bg-white border border-green-200 text-green-700 font-bold flex items-center justify-center hover:bg-green-100 hover:border-green-300 shadow-sm transition-all"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
                                     </div>
-                                    <button
-                                        onClick={() => removeFromCart(item._id || item.id || '')}
-                                        className="text-gray-400 hover:text-red-500 transition p-2"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
+                                    <div className="flex flex-col items-end gap-2">
+                                        <span className="font-bold text-gray-800">₹{item.price * item.quantity}</span>
+                                        <button
+                                            onClick={() => removeFromCart(item._id || item.id || '')}
+                                            className="text-gray-400 hover:text-red-500 transition p-2"
+                                            title="Remove all"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>

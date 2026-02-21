@@ -46,6 +46,7 @@ interface AppState {
     isAuthenticated: boolean;
     addToCart: (product: Product) => void;
     removeFromCart: (productId: string) => void;
+    removeOneFromCart: (productId: string) => void;
     toggleCart: () => void;
     fetchProducts: () => Promise<void>;
     clearCart: () => void;
@@ -68,6 +69,13 @@ export const useStore = create<AppState>()(
             removeFromCart: (productId) => set((state) => ({
                 cart: state.cart.filter(item => (item._id || item.id) !== productId)
             })),
+            removeOneFromCart: (productId) => set((state) => {
+                const index = state.cart.findIndex(item => (item._id || item.id) === productId);
+                if (index === -1) return state;
+                const newCart = [...state.cart];
+                newCart.splice(index, 1);
+                return { cart: newCart };
+            }),
             toggleCart: () => set((state) => ({ isCartOpen: !state.isCartOpen })),
             clearCart: () => set({ cart: [] }),
             login: (email, role) => set({ user: { email, role }, isAuthenticated: true }),
