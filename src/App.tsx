@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Header } from './components/Header';
 import { MandiTicker } from './components/MandiTicker';
 import { Footer } from './components/Footer';
@@ -12,10 +13,33 @@ import { Placeholder } from './pages/Placeholder';
 import { CategoryPage } from './pages/CategoryPage';
 import { ConsumerLogin } from './pages/ConsumerLogin';
 import { AboutUs, HowItWorks, FarmerDirectory, GovernmentSchemes, ContactUs, FAQ, TermsOfService } from './pages/FooterPages';
+import { supabase } from './lib/supabase';
+import { useStore } from './store/useStore';
+
+function AuthListener() {
+  const navigate = useNavigate();
+  const { login, isAuthenticated } = useStore();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user && !isAuthenticated) {
+        const user = session.user;
+        const role = user.user_metadata?.role || 'consumer';
+        login(user.email || '', role);
+        navigate('/', { replace: true });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [login, navigate, isAuthenticated]);
+
+  return null;
+}
 
 export default function App() {
   return (
     <Router>
+      <AuthListener />
       <main className="min-h-screen flex flex-col relative overflow-x-hidden">
         <Header />
         <Cart />
