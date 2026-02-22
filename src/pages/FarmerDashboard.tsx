@@ -13,12 +13,9 @@ export const FarmerDashboard = () => {
     const [newCropStock, setNewCropStock] = useState('');
     const [newCropCategory, setNewCropCategory] = useState('vegetable');
 
-    const { products, user, addProductLocally } = useStore((state) => ({
-        products: state.products,
-        user: state.user,
-        // local hook into zustand to push items locally since we are maintaining feature tracking offline
-        addProductLocally: (product: any) => useStore.setState(s => ({ products: [product, ...s.products] }))
-    }));
+    const products = useStore((state) => state.products);
+    const user = useStore((state) => state.user);
+    const addProductLocally = (product: any) => useStore.setState(s => ({ products: [product, ...s.products] }));
 
     const farmerInventory = useMemo(() => {
         // Find products owned by this specific farmer (or fallback to showing all products conceptually if no strict bindings exist yet)
