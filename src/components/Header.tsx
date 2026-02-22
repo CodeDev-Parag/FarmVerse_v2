@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useStore } from '../store/useStore';
-import { ShoppingCart, User, Search, Globe } from 'lucide-react';
+import { ShoppingCart, User, Search, Globe, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
@@ -184,13 +184,23 @@ export const Header = () => {
                                             </div>
 
                                             <div className="py-2">
+                                                {user.role === 'farmer' && (
+                                                    <Link
+                                                        to="/farmer/dashboard"
+                                                        onClick={() => setShowProfileMenu(false)}
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-all duration-200 group"
+                                                    >
+                                                        <User size={16} className="text-gray-400 group-hover:text-green-600 transition-colors" />
+                                                        <span className="font-medium">Dashboard</span>
+                                                    </Link>
+                                                )}
                                                 <Link
-                                                    to={user.role === 'farmer' ? '/farmer/dashboard' : '/my-orders'}
+                                                    to="/my-orders"
                                                     onClick={() => setShowProfileMenu(false)}
                                                     className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-all duration-200 group"
                                                 >
-                                                    <User size={16} className="text-gray-400 group-hover:text-green-600 transition-colors" />
-                                                    <span className="font-medium">{user.role === 'farmer' ? 'Dashboard' : 'My Orders'}</span>
+                                                    <Package size={16} className="text-gray-400 group-hover:text-green-600 transition-colors" />
+                                                    <span className="font-medium">My Orders</span>
                                                 </Link>
                                                 <Link
                                                     to="/checkout"
