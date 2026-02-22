@@ -25,9 +25,26 @@ function AuthListener() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session?.user && !isAuthenticated) {
         const user = session.user;
-        const role = user.user_metadata?.role || 'consumer';
+        let role = user.user_metadata?.role;
+
+        // In Google OAuth, metadata role is usually empty on the first sign in. 
+        // We infer it based on the URL they were redirected back to after authentication.
+        if (!role) {
+          role = window.location.pathname.includes('farmer') ? 'farmer' : 'consumer';
+          // Save this to Supabase so we know their role when they refresh the page tomorrow
+          supabase.auth.updateUser({ data: { role } });
+        }
+
         login(user.email || '', role);
-        navigate('/', { replace: true });
+
+        // Only explicitly navigate if they are stuck on a login page form
+        if (window.location.pathname.includes('/login')) {
+          if (role === 'farmer') {
+            navigate('/farmer/dashboard', { replace: true });
+          } else {
+            navigate('/', { replace: true });
+          }
+        }
       }
     });
 
