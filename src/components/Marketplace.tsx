@@ -17,7 +17,7 @@ export const Marketplace = () => {
                 ) : products.filter(p => p.category !== 'supply' && p.farmer).map(product => (
                     <div key={product._id || product.id} className="border border-green-200 rounded-xl p-4 shadow-sm hover:shadow-md transition bg-white relative overflow-hidden group">
                         <div className="w-full h-48 bg-gray-100 rounded-lg flex flex-col items-center justify-center text-gray-500 mb-4 text-center relative overflow-hidden">
-                            <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                            <img src={product.image} alt={product.name} loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                         </div>
                         <h3 className="font-bold text-lg">{product.name}</h3>
                         <p className="text-sm text-gray-600 mb-2">Farmer: {product.farmer}</p>

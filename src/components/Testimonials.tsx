@@ -117,6 +117,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
             <img
                 src={testimonial.imgSrc}
                 alt={`${testimonial.by.split(',')[0]}`}
+                loading="lazy"
                 className="mb-4 h-14 w-14 rounded-full bg-green-100 object-cover object-center border-2 border-white"
                 style={{
                     boxShadow: isCenter ? "3px 3px 0px #15803d" : "3px 3px 0px #bbf7d0"

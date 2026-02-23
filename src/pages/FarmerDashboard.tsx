@@ -108,7 +108,7 @@ export const FarmerDashboard = () => {
                                                     <tr key={item._id || item.id} className="border-b border-green-50 hover:bg-green-50/30 transition last:border-0">
                                                         <td className="px-4 py-3 font-medium text-gray-800 flex items-center gap-3">
                                                             {item.image ? (
-                                                                <img src={item.image} className="w-8 h-8 rounded object-cover" alt={item.name} />
+                                                                <img src={item.image} loading="lazy" className="w-8 h-8 rounded object-cover" alt={item.name} />
                                                             ) : (
                                                                 <div className="w-8 h-8 rounded bg-gradient-to-br from-green-100 to-emerald-200 flex items-center justify-center text-xs">🥬</div>
                                                             )}
@@ -206,7 +206,7 @@ export const FarmerDashboard = () => {
                                     <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                                     {newCropImage ? (
                                         <div className="absolute inset-0 w-full h-full">
-                                            <img src={newCropImage} alt="Preview" className="w-full h-full object-cover" />
+                                            <img src={newCropImage} alt="Preview" loading="lazy" className="w-full h-full object-cover" />
                                             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                                                 <span className="text-white font-medium text-sm">Click to change photo</span>
                                             </div>

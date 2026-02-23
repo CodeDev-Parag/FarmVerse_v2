@@ -105,7 +105,7 @@ export const MyOrders = () => {
                                                 className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2 text-sm border border-gray-100"
                                             >
                                                 {item.image ? (
-                                                    <img src={item.image} alt={item.name} className="w-8 h-8 rounded-md object-cover" />
+                                                    <img src={item.image} alt={item.name} loading="lazy" className="w-8 h-8 rounded-md object-cover" />
                                                 ) : (
                                                     <div className="w-8 h-8 rounded-md bg-gradient-to-br from-green-100 to-emerald-200 flex items-center justify-center text-xs">
                                                         🥬
